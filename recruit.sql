@@ -14,10 +14,10 @@ CREATE TABLE `users` (
 DROP TABLE IF EXISTS `questions`;
 CREATE TABLE `questions` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `type` varchar(200) NOT NULL UNIQUE,
+  `type` varchar(200) NOT NULL,
   `status` varchar(200) NOT NULL,
-  `author` int NOT NULL UNIQUE,
-  `receiver` int NOT NULL UNIQUE,
+  `author` int DEFAULT NULL,
+  `receiver` int NOT NULL,
   `question` varchar(300) NOT NULL,
   `answer` varchar(300) NOT NULL,
   `createAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

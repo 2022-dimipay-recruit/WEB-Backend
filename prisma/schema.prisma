@@ -26,7 +26,7 @@ model question {
   createAt DateTime @default(now())
   type String @unique
   status String 
-  author Int @unique
+  author Int? @unique
   receiver Int @unique
   question String
   answer String 
