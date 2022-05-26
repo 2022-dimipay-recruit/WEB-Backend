@@ -24,10 +24,10 @@ model users {
 model question {
   id Int @id @default(autoincrement())
   createAt DateTime @default(now())
-  type String @unique
+  type String 
   status String 
-  author Int? @unique
-  receiver Int @unique
+  author Int? 
+  receiver Int 
   question String
   answer String 
 }
