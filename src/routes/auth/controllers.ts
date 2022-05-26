@@ -14,7 +14,7 @@ import {
 
 const prisma = new PrismaClient();
 
-const getEntireIdentity = async (id: string) => {
+const getEntireIdentity = async (id: number) => {
   const identity: UserIdentity = await prisma.users.findUnique({
     where: {
       id
@@ -85,6 +85,9 @@ export const createUser = async (req: Request, res: Response) => {
       password: hashPassword,
       name,
       salt
+    },
+    select: {
+      name: true
     }
   });
   res.json({user});
