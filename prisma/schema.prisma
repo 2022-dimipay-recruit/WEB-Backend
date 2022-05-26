@@ -20,3 +20,14 @@ model users {
   salt String
   profile String @default("/defaultProfile.jpg")
 }
+
+model question {
+  id Int @id @default(autoincrement())
+  createAt DateTime @default(now())
+  type String @unique
+  status String 
+  author String @unique
+  receiver String @unique
+  question String
+  answer String 
+}
