@@ -18,8 +18,8 @@ CREATE TABLE `questions` (
   `status` varchar(200) NOT NULL,
   `author` int NOT NULL UNIQUE,
   `receiver` int NOT NULL UNIQUE,
-  `question` varchar(3000) NOT NULL,
-  `answer` varchar(3000) NOT NULL,
+  `question` varchar(300) NOT NULL,
+  `answer` varchar(300) NOT NULL,
   `createAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=`utf8mb4` COLLATE=`utf8mb4_0900_ai_ci`;
