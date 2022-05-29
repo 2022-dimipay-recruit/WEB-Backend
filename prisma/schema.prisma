@@ -40,9 +40,9 @@ model Question {
   status     Status   @default(received)
   question   String   @db.VarChar(300) // max content length is 300
   answer     String   @db.VarChar(300)
-  authorId   Int
+  authorId   Int?
   receiverId Int
-  author     User     @relation("ask", fields: [authorId], references: [id])
+  author     User?    @relation("ask", fields: [authorId], references: [id])
   receiver   User     @relation("receive", fields: [receiverId], references: [id])
 
   @@map("questions")
