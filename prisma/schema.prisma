@@ -17,7 +17,7 @@ model User {
   salt     String
   profile  Profile?
   asked    Question[] @relation("ask")
-  recived  Question[] @relation("recive")
+  received Question[] @relation("receive")
 
   @@map("users")
 }
@@ -27,7 +27,7 @@ model Profile {
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id])
 
-  email    Status @unique
+  email    String @unique
   userName String @unique // range of user name length should be set
   name     String // this also need length limit
   image    String @default("/defaultProfile.jpg")
@@ -43,7 +43,7 @@ model Question {
   authorId   Int
   receiverId Int
   author     User     @relation("ask", fields: [authorId], references: [id])
-  reciver    User     @relation("recive", fields: [receiverId], references: [id])
+  receiver   User     @relation("receive", fields: [receiverId], references: [id])
 
   @@map("questions")
 }
