@@ -28,8 +28,8 @@ model Profile {
   user   User @relation(fields: [userId], references: [id])
 
   email    Status @unique
-  username String @unique
-  name     String // range of name length should be set
+  userName String @unique // range of user name length should be set
+  name     String // this also need length limit
   image    String @default("/defaultProfile.jpg")
 }
 
