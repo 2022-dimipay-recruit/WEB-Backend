@@ -10,24 +10,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id Int @id @default(autoincrement())
-  createAt DateTime @default(now())
-  email String @unique
-  username String @unique
-  name String
+model User {
+  id       Int        @id @default(autoincrement())
+  createAt DateTime   @default(now())
   password String
-  salt String
-  profile String @default("/defaultProfile.jpg")
+  salt     String
+  profile  Profile?
+  asked    Question[] @relation("ask")
+  recived  Question[] @relation("recive")
+
+  @@map("users")
 }
 
-model question {
-  id Int @id @default(autoincrement())
-  createAt DateTime @default(now())
-  type String 
-  status String 
-  author Int? 
-  receiver Int 
-  question String
-  answer String 
+model Profile {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  email    Status @unique
+  username String @unique
+  name     String // range of name length should be set
+  image    String @default("/defaultProfile.jpg")
+}
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  createAt   DateTime @default(now())
+  type       Type     @default(anonymous)
+  status     Status   @default(received)
+  question   String   @db.VarChar(300) // max content length is 300
+  answer     String   @db.VarChar(300)
+  authorId   Int
+  receiverId Int
+  author     User     @relation("ask", fields: [authorId], references: [id])
+  reciver    User     @relation("recive", fields: [receiverId], references: [id])
+
+  @@map("questions")
+}
+
+enum Type {
+  anonymous
+  onymous
+}
+
+enum Status {
+  received
+  accepted
+  rejected
 }
