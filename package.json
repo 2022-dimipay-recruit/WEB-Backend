@@ -1,15 +1,15 @@
 {
-  "name": "WEB-Backend",
+  "name": "web-backend",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:2022-dimipay-recruit/WEB-Backend.git",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p .",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint --fix src/**/*.ts",
     "test": "jest --detectOpenHandles --forceExit",
-    "dev": "cross-env NODE_ENV=develop tsc-watch --onSuccess 'node dist/index.js'",
-    "serve": "cross-env NODE_ENV=prod node dist/index.js"
+    "dev": "cross-env NODE_ENV=develop NODE_PATH=./src nodemon src/index.ts",
+    "serve": "cross-env NODE_ENV=prod NODE_PATH=./dist node dist/index.js"
   },
   "author": "오명훈 <omh02033@gmail.com>",
   "license": "MIT",
@@ -26,9 +26,7 @@
     "helmet": "^5.1.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^4.6.0",
     "prisma": "^3.14.0",
-    "tsc-watch": "^5.0.3",
     "winston": "^3.7.2",
     "winston-daily-rotate-file": "^4.6.1"
   },
