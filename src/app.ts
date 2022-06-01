@@ -1,13 +1,14 @@
 import express from 'express'
 
 import cors from 'cors'
-import bearerToken from 'express-bearer-token'
 import helmet from 'helmet'
 import path from 'path'
 import jsend from 'jsend'
+import config from 'config'
+import cookieParser from 'cookie-parser'
 
-import { attachUserInfo, errorHandler } from './middlewares'
-import { serviceRouter } from './routes'
+import errorHandler from 'middlewares/error-handler'
+import { serviceRouter } from 'routes'
 
 class App {
   public app: express.Application
@@ -28,14 +29,8 @@ class App {
     this.app.use(cors())
     this.app.use(express.json())
     this.app.use(express.static(path.join(__dirname, '/assets')))
-    this.app.use(
-      bearerToken({
-        headerKey: 'Bearer',
-        reqKey: 'token',
-      })
-    )
-    this.app.use(attachUserInfo)
     this.app.use(jsend.middleware)
+    this.app.use(cookieParser(config.cookieSecret))
   }
 
   private initializeErrorHandlers() {
