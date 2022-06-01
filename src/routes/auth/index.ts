@@ -1,6 +1,9 @@
-import Joi from 'joi';
-import * as controllers from './controllers';
-import { createService } from '../index';
+import Joi from 'joi'
+import { createService } from 'routes'
+
+import signup from './signup.controller'
+import signin from './signin.controller'
+import refresh from './refresh.controller'
 
 export default createService({
   name: '인증 서비스',
@@ -8,31 +11,34 @@ export default createService({
   routes: [
     {
       method: 'post',
-      path: '/',
-      needAuth: false,
-      validateSchema: {
-        username: Joi.string().required(),
-        password: Joi.string().required(),
-      },
-      handler: controllers.identifyUser,
-    },
-    {
-      method: 'post',
       path: '/signup',
       needAuth: false,
       validateSchema: {
-        email: Joi.string().required(),
-        username: Joi.string().required(),
-        password: Joi.string().required(),
-        name: Joi.string().required()
+        userName: Joi.string().required(),
+        password: Joi.string().pattern(/^[A-Fa-f0-9]{64}$/),
+        name: Joi.string().required(),
+        email: Joi.string().email(),
       },
-      handler: controllers.createUser,
+      handler: signup,
     },
     {
       method: 'post',
+      path: '/signin',
       needAuth: false,
-      path: '/refresh',
-      handler: controllers.refreshAccessToken,
+      validateSchema: {
+        email: Joi.string().email(),
+        password: Joi.string().pattern(/^[A-Fa-f0-9]{64}$/),
+      },
+      handler: signin,
+    },
+    { method: 'post', path: '/refresh', needAuth: false, handler: refresh },
+    {
+      method: 'post',
+      path: '/test',
+      needAuth: true,
+      handler: (req, res) => {
+        res.send('test')
+      },
     },
   ],
-});
+})
