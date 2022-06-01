@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { Prisma, PrismaClient, Profile, User } from '@prisma/client'
 import { HttpException } from 'exceptions'
 import { createSalt, getHash } from 'resources/hash'
-import { sign } from 'resources/token'
+import { signTokens } from 'resources/token'
 
 const prisma = new PrismaClient()
 
@@ -33,17 +33,7 @@ export default async function (
     },
   })
 
-  res.cookie('accessToken', sign(id), {
-    httpOnly: true,
-    signed: true,
-  })
-
-  res.cookie('refreshToken', sign(id, true), {
-    httpOnly: true,
-    signed: true,
-  })
-
-  res.jsend.success({})
+  signTokens(res, id)
 }
 
 const isUniqeProfile = async <T extends keyof Prisma.ProfileWhereUniqueInput>(
