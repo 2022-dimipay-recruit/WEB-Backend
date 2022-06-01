@@ -1,71 +1,36 @@
-import jwt from 'jsonwebtoken';
-import { User, UserIdentity } from '../interfaces';
-import config from '../config';
-import { HttpException } from '../exceptions';
-import { TokenType } from '../types';
+import { Response } from 'express'
+import jwt from 'jsonwebtoken'
+import { User } from '@prisma/client'
+import config from 'config'
 
-export const getTokenType = async (token: string): Promise<TokenType> => {
-  try {
-    const payload: any = await jwt.verify(
-      token,
-      config.jwtSecret as string,
-    );
-    return (
-      payload.refresh
-        ? 'REFRESH' : 'ACCESS'
-    );
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      throw new HttpException(401, '토큰이 만료되었습니다.');
-    } else if (['jwt malformed', 'invalid signature'].includes(error.message)) {
-      throw new HttpException(401, '토큰이 변조되었습니다.');
-    } else throw new HttpException(401, '토큰에 문제가 있습니다.');
-  }
-};
+export function sign(id: User['id'], refresh = false): string {
+  return jwt.sign(
+    Object.assign({ id }, refresh ? { refresh: true } : {}),
+    config.jwtSecret,
+    {
+      expiresIn: refresh ? '1y' : '10min',
+    }
+  )
+}
 
-export const verify = async (token: string) => {
-  try {
-    const { identity }: any = await jwt.verify(
-      token,
-      config.jwtSecret as string,
-    );
-    return identity;
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      throw new HttpException(401, '토큰이 만료되었습니다.');
-    } else if (['jwt malformed', 'invalid signature'].includes(error.message)) {
-      throw new HttpException(401, '토큰이 변조되었습니다.');
-    } else throw new HttpException(401, '토큰에 문제가 있습니다.');
-  }
-};
-
-export const issue = async (identity: UserIdentity, refresh: boolean) => {
+export function verify(token: string, refresh = false): User['id'] {
   if (refresh) {
-    const token = await jwt.sign(
-      {
-        identity: {
-          id: identity.id,
-        },
-        refresh: true,
-      },
-      config.jwtSecret as string,
-      {
-        algorithm: 'HS512',
-        expiresIn: '1y',
-      },
-    );
-    return token;
+    const decode = jwt.verify(token, config.jwtSecret) as {
+      id: User['id']
+      refresh: boolean
+    }
+    if (decode.refresh !== true) throw 'wrong token'
+    return decode.id
   }
-  const token = await jwt.sign(
-    {
-      identity,
-      refresh: false,
-    },
-    config.jwtSecret as string,
-    {
-      algorithm: 'HS512',
-      expiresIn: '1w',
-    },
-  );
-  return token;
-};
+  return (jwt.verify(token, config.jwtSecret) as { id: User['id'] }).id
+}
+
+export const signTokens = (res: Response, id: User['id']): void => {
+  res.cookie('refreshToken', sign(id, true), {
+    httpOnly: true,
+    // secure: true,
+    sameSite: 'strict',
+    maxAge: 1000 * 60 * 60 * 24 * 365.25,
+  })
+  res.jsend.success({ accessToken: sign(id) })
+}
