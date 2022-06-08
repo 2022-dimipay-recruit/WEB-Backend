@@ -1,30 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import logger from '../resources/logger';
+import { HttpException } from 'exceptions';
+import logger from 'resources/logger';
 
-const sendError = (res: Response, status: number, message: string) => {
-  res.status(status).json({ message });
-};
-
-const errorHandler = (
+export default function (
   error: HttpException,
   req: Request,
   res: Response,
-  next: NextFunction,
-) => {
-  switch (error.name) {
-    case 'HttpException': {
-      const { name, status = 500, message } = error as HttpException;
-      logger.error(`[${name}]${message}`);
-      sendError(res, status, message);
-      break;
-    }
-    default: {
-      logger.error(JSON.stringify(error));
-      sendError(res, 500, '알 수 없는 에러가 발생했습니다.');
-      break;
-    }
-  }
-};
+  next: NextFunction
+) {
+  const data: unknown = error?.data;
+  const { status, message } = error;
 
-export default errorHandler;
+  logger.error({ message, data });
+  res.status(status).jsend[status < 500 ? 'fail' : 'error']({ message });
+}
