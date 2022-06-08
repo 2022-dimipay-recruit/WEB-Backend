@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express'
-import { HttpException } from 'exceptions'
-import { verify } from 'resources/token'
+import { NextFunction, Request, Response } from 'express';
+import { HttpException } from 'exceptions';
+import { verify } from 'resources/token';
 
 export default function (
   req: Request,
@@ -9,13 +9,13 @@ export default function (
 ): void {
   try {
     if (!req.needAuth) {
-      return next()
+      return next();
     }
 
-    const token = req.headers.token as string
-    req.user = verify(token)
-    return next()
+    const token = req.headers.token as string;
+    req.user = verify(token);
+    return next();
   } catch (error) {
-    next(new HttpException(401, 'wrong token', error))
+    next(new HttpException(401, 'wrong token', error));
   }
 }

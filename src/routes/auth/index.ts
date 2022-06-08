@@ -1,9 +1,9 @@
-import Joi from 'joi'
-import { createService } from 'routes'
+import Joi from 'joi';
+import { createService } from 'routes';
 
-import signup from './signup.controller'
-import signin from './signin.controller'
-import refresh from './refresh.controller'
+import signup from './signup.controller';
+import signin from './signin.controller';
+import refresh from './refresh.controller';
 
 export default createService({
   name: '인증 서비스',
@@ -37,8 +37,8 @@ export default createService({
       path: '/test',
       needAuth: true,
       handler: (req, res) => {
-        res.send('test')
+        res.send('test');
       },
     },
   ],
-})
+});

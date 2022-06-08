@@ -1,24 +1,24 @@
-import { Request, Response, NextFunction } from 'express'
-import { PrismaClient } from '@prisma/client'
-import { HttpException } from 'exceptions'
-import { getHash } from 'resources/hash'
-import { signTokens } from 'resources/token'
+import { Request, Response, NextFunction } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { HttpException } from 'exceptions';
+import { getHash } from 'resources/hash';
+import { signTokens } from 'resources/token';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export default async function (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { email, password } = req.body as { [k: string]: string }
+  const { email, password } = req.body as { [k: string]: string };
 
   try {
     const { id, salt } = await prisma.user.findFirst({
       where: { profile: { email } },
       select: { id: true, salt: true },
       rejectOnNotFound: true,
-    })
+    });
 
     await prisma.user.findFirst({
       where: {
@@ -26,10 +26,10 @@ export default async function (
         password: getHash(password, salt),
       },
       rejectOnNotFound: true,
-    })
+    });
 
-    signTokens(res, id)
+    signTokens(res, id);
   } catch (error) {
-    return next(new HttpException(401, 'login fail', error))
+    return next(new HttpException(401, 'login fail', error));
   }
 }
