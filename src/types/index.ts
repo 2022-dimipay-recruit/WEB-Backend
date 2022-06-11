@@ -1,7 +1,17 @@
-export const TokenTypeValues = ['REFRESH', 'ACCESS'];
-export type TokenType = typeof TokenTypeValues[number];
+import { Type } from '@prisma/client';
 
-export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+export type HTTPMethod =
+  | 'all'
+  | 'get'
+  | 'post'
+  | 'put'
+  | 'delete'
+  | 'patch'
+  | 'options'
+  | 'head';
 
-export type QuestionType = 'anonym' | 'real';
-export type QuestionStatus = 'received' | 'accepted' | 'rejected';
+export interface QuestionBody {
+  receiver: string;
+  question: string;
+  type: Type;
+}
