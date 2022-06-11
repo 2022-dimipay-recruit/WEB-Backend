@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { Prisma, PrismaClient, Profile, User } from '@prisma/client';
+import { Prisma, Profile, User } from '@prisma/client';
+import prisma from 'resources/db';
 import { HttpException } from 'exceptions';
 import { createSalt, getHash } from 'resources/hash';
 import { signTokens } from 'resources/token';
-
-const prisma = new PrismaClient();
 
 export default async function (
   req: Request,
