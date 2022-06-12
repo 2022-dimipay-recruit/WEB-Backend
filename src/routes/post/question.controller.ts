@@ -1,3 +1,4 @@
+import { Profile } from '@prisma/client';
 import xss from 'xss';
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions/index';
@@ -11,31 +12,41 @@ export default async function (
   next: NextFunction
 ) {
   const id = req.user;
-  const { receiver, question, type } = req.body;
-
-  if (id === receiver) {
-    return next(new HttpException(400, 'wrong receiver'));
-  }
+  /**
+   * @type {string} receiver - receiver's userName(unique value)
+   * @type {string} post - question body
+   * @type {(anonymous|onymous)} type
+   */
+  const { receiver, post, type } = req.body;
 
   try {
-    const questionLength: number = await prisma.question.count({
-      where: { receiverId: receiver },
+    const { id: receiverId } = await prisma.profile.findUnique({
+      rejectOnNotFound: true,
+      where: { userName: receiver },
+      select: { id: true },
     });
-    const newQuestionId: number = questionLength + 1;
+
+    if (id === receiverId) {
+      return next(new HttpException(400, 'wrong receiver'));
+    }
+
+    const newQuestionId: number =
+      (await prisma.question.count({
+        where: { receiverId },
+      })) + 1;
 
     await prisma.question.create({
       data: {
         type,
-        question: xss(question),
-        receiverId: receiver,
-        authorId: type === 'onymous' ? null : id,
+        question: xss(post),
+        receiverId,
+        authorId: type === 'onymous' ? id : null,
         postId: newQuestionId,
       },
     });
 
     res.jsend.success({ id: newQuestionId });
   } catch (error) {
-    /** @see https://www.prisma.io/docs/reference/api-reference/error-reference#error-codes */
     if (error.code === 'P2003') {
       return next(new HttpException(400, 'invalid receiver id'));
     }
