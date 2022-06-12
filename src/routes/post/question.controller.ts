@@ -1,4 +1,3 @@
-import { Profile } from '@prisma/client';
 import xss from 'xss';
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions/index';
