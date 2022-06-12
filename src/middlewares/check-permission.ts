@@ -12,7 +12,8 @@ export default function (
       return next();
     }
 
-    const token = req.headers.token as string;
+    const token = req.headers.authorization.split(' ')[1];
+
     req.user = verify(token);
     return next();
   } catch (error) {

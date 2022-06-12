@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
+  id       String     @id @default(uuid())
   createAt DateTime   @default(now())
   password String
   salt     String
@@ -23,8 +23,8 @@ model User {
 }
 
 model Profile {
-  id   Int  @id
-  user User @relation(fields: [id], references: [id])
+  id   String @id
+  user User   @relation(fields: [id], references: [id])
 
   email    String @unique
   userName String @unique // range of user name length should be set
@@ -35,13 +35,14 @@ model Profile {
 
 model Question {
   id         Int      @id @default(autoincrement())
+  postId     Int
   createAt   DateTime @default(now())
   type       Type     @default(anonymous)
   status     Status   @default(received)
   question   String   @db.VarChar(300) // max content length is 300
   answer     String   @default("") @db.VarChar(300)
-  authorId   Int?
-  receiverId Int
+  authorId   String?
+  receiverId String
   author     User?    @relation("ask", fields: [authorId], references: [id])
   receiver   User     @relation("receive", fields: [receiverId], references: [id])
   like       Like[]
@@ -53,7 +54,7 @@ model Like {
   id         Int      @id @default(autoincrement())
   questionId Int
   question   Question @relation(fields: [questionId], references: [id])
-  userId     Int      @unique
+  userId     String   @unique
   profile    Profile  @relation(fields: [userId], references: [id])
 }
 
