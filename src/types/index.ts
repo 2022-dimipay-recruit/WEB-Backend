@@ -1,4 +1,4 @@
-import { Type } from '@prisma/client';
+import { Type, Status } from '@prisma/client';
 
 export type HTTPMethod =
   | 'all'
@@ -12,6 +12,12 @@ export type HTTPMethod =
 
 export interface QuestionBody {
   receiver: string;
-  question: string;
+  post: string;
   type: Type;
+}
+
+export interface AsnwerBody {
+  questionId: string;
+  post: string;
+  status: Status;
 }
