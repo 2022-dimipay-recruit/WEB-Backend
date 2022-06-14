@@ -20,8 +20,8 @@ interface KeyValue<T> {
 export interface Route {
   method: HTTPMethod;
   path: string;
-  middlewares?: RequestHandler[];
-  handler: RequestHandler;
+  middlewares?: RequestHandler<any>[];
+  handler: RequestHandler<any, any, any, any, any>;
   validateSchema?: KeyValue<Joi.Schema>;
   needAuth: boolean; // 인증이 필요한지
 }
