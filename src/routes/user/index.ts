@@ -10,6 +10,13 @@ export default createService({
   routes: [
     {
       method: 'get',
+      path: '/',
+      needAuth: true,
+      handler: user,
+    },
+
+    {
+      method: 'get',
       path: '/:name',
       needAuth: false,
       middlewares: [checkExistingUser],

@@ -1,5 +1,6 @@
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions';
+import { verify } from 'resources/token';
 
 import type { Request, Response, NextFunction } from 'express';
 import { UserParams } from 'types';
@@ -10,10 +11,15 @@ export default async function (
   next: NextFunction
 ): Promise<void> {
   try {
+    const userName = req.params.name;
+
     await prisma.profile.findUnique({
       rejectOnNotFound: true,
-      where: { userName: req.params.name },
+      where: { userName },
     });
+
+    req.user = userName;
+
     return next();
   } catch (error) {
     return next(new HttpException(400, 'user not found', error));

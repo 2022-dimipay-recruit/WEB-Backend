@@ -10,7 +10,8 @@ export default async function (
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const userName = req.params.name;
+  const userName = req.user;
+  console.log(userName);
 
   try {
     const questions: { [key: string]: number } = {};
