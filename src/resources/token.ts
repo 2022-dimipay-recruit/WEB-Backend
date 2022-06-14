@@ -27,11 +27,8 @@ export function verify(token: string, refresh = false): Profile['userName'] {
 }
 
 export const signTokens = (res: Response, name: Profile['userName']): void => {
-  res.cookie('refreshToken', sign(name, true), {
-    httpOnly: true,
-    // secure: true,
-    sameSite: 'strict',
-    maxAge: 1000 * 60 * 60 * 24 * 365.25,
+  res.jsend.success({
+    accessToken: sign(name),
+    refreshToken: sign(name, true),
   });
-  res.jsend.success({ accessToken: sign(name) });
 };
