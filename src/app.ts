@@ -28,7 +28,7 @@ class App {
     this.app.use(helmet());
     this.app.use(cors());
     this.app.use(express.json());
-    this.app.use(express.static(path.join(__dirname, '/assets')));
+    this.app.use('/assets', express.static(path.join(__dirname, '/assets')));
     this.app.use(jsend.middleware);
     this.app.use(cookieParser(config.cookieSecret));
   }

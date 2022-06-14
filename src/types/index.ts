@@ -21,3 +21,11 @@ export interface AsnwerBody {
   post: string;
   status: Status;
 }
+
+export interface UserParams {
+  name: string;
+}
+
+export type UserQuestionQuery = Partial<
+  Record<'type' | 'page' | 'itemsPerPage', string>
+>;
