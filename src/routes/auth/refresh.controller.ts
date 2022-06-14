@@ -1,14 +1,7 @@
-import { HttpException } from 'exceptions/index';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { verify, signTokens } from 'resources/token';
 
-export default function (
-  { cookies: { refreshToken } }: Request,
-  res: Response,
-  next: NextFunction
-): void {
-  if (typeof refreshToken === 'undefined') {
-    return next(new HttpException(400, 'wrong token'));
-  }
+export default function (req: Request, res: Response): void {
+  const refreshToken = req.headers.authorization.split(' ')[1];
   signTokens(res, verify(refreshToken));
 }
