@@ -4,7 +4,6 @@ import { createService } from 'routes';
 import signup from './signup.controller';
 import signin from './signin.controller';
 import refresh from './refresh.controller';
-import user from './user.controller';
 
 export default createService({
   name: '인증 서비스',
@@ -40,12 +39,6 @@ export default createService({
       handler: (req, res) => {
         res.send('test');
       },
-    },
-    {
-      method: 'get',
-      path: '/me',
-      needAuth: true,
-      handler: user,
     },
   ],
 });
