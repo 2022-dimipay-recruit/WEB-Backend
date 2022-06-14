@@ -10,7 +10,8 @@ export default async function (
   res: Response,
   next: NextFunction
 ) {
-  const id = req.user;
+  const userName = req.user;
+  console.log('name', userName);
   /**
    * @type {string} receiver - receiver's userName(unique value)
    * @type {string} post - question body
@@ -19,27 +20,21 @@ export default async function (
   const { receiver, post, type } = req.body;
 
   try {
-    const { id: receiverId } = await prisma.profile.findUnique({
-      rejectOnNotFound: true,
-      where: { userName: receiver },
-      select: { id: true },
-    });
-
-    if (id === receiverId) {
+    if (receiver === userName) {
       return next(new HttpException(400, 'wrong receiver'));
     }
 
     const newQuestionId: number =
       (await prisma.question.count({
-        where: { receiverId },
+        where: { receiverName: receiver },
       })) + 1;
 
     await prisma.question.create({
       data: {
         type,
         question: xss(post),
-        receiverId,
-        authorId: type === 'onymous' ? id : null,
+        receiverName: receiver,
+        authorName: type === 'onymous' ? userName : null,
         postId: newQuestionId,
       },
     });
@@ -47,7 +42,7 @@ export default async function (
     res.jsend.success({ id: newQuestionId });
   } catch (error) {
     if (error.code === 'P2003') {
-      return next(new HttpException(400, 'invalid receiver id'));
+      return next(new HttpException(400, 'invalid receiver id', error));
     }
 
     next(new HttpException(500, 'server error', error));

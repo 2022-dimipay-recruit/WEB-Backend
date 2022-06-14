@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import config from 'config';
 
-export function sign(id: User['id'], refresh = false): string {
+export function sign(id: any, refresh = false): string {
   return jwt.sign(
     Object.assign({ id }, refresh ? { refresh: true } : {}),
     config.jwtSecret,
@@ -13,24 +13,25 @@ export function sign(id: User['id'], refresh = false): string {
   );
 }
 
-export function verify(token: string, refresh = false): User['id'] {
+export function verify(token: string, refresh = false): Profile['userName'] {
   if (refresh) {
     const decode = jwt.verify(token, config.jwtSecret) as {
-      id: User['id'];
+      name: Profile['userName'];
       refresh: boolean;
     };
     if (decode.refresh !== true) throw 'wrong token';
-    return decode.id;
+    return decode.name;
   }
-  return (jwt.verify(token, config.jwtSecret) as { id: User['id'] }).id;
+  return (jwt.verify(token, config.jwtSecret) as { id: Profile['userName'] })
+    .id;
 }
 
-export const signTokens = (res: Response, id: User['id']): void => {
-  res.cookie('refreshToken', sign(id, true), {
+export const signTokens = (res: Response, name: Profile['userName']): void => {
+  res.cookie('refreshToken', sign(name, true), {
     httpOnly: true,
     // secure: true,
     sameSite: 'strict',
     maxAge: 1000 * 60 * 60 * 24 * 365.25,
   });
-  res.jsend.success({ accessToken: sign(id) });
+  res.jsend.success({ accessToken: sign(name) });
 };
