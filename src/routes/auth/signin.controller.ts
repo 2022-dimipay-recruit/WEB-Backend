@@ -18,15 +18,24 @@ export default async function (
       rejectOnNotFound: true,
     });
 
-    await prisma.user.findFirst({
+    const {
+      profile: { userName },
+    } = await prisma.user.findFirst({
       where: {
         id,
         password: getHash(password, salt),
       },
+      select: {
+        profile: {
+          select: {
+            userName: true,
+          },
+        },
+      },
       rejectOnNotFound: true,
     });
 
-    signTokens(res, id);
+    signTokens(res, userName);
   } catch (error) {
     return next(new HttpException(401, 'login fail', error));
   }

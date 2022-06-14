@@ -24,7 +24,7 @@ export default async function (
   const salt: string = createSalt();
   const pbkdf2Password: string = getHash(password, salt);
 
-  const { id }: User = await prisma.user.create({
+  await prisma.user.create({
     data: {
       password: pbkdf2Password,
       salt,
@@ -32,7 +32,7 @@ export default async function (
     },
   });
 
-  signTokens(res, id);
+  signTokens(res, userName);
 }
 
 const isUniqeProfile = async <T extends keyof Prisma.ProfileWhereUniqueInput>(
