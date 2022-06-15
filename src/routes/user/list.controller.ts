@@ -20,8 +20,26 @@ export default async function (
   }
 
   try {
+    const normalizedItemsPerPage: number = +itemsPerPage | 0;
+    const normalizedPage: number = +page;
+
+    const questionQuery = { receiverName: userName, status: type as Status };
+    const questionLength: number = await prisma.question.count({
+      where: questionQuery,
+    });
+
+    const maxPage: number = Math.ceil(questionLength / normalizedItemsPerPage);
+
+    if (
+      normalizedPage < 0 ||
+      normalizedItemsPerPage < 0 ||
+      normalizedItemsPerPage * maxPage < normalizedPage
+    ) {
+      return next(new HttpException(400, 'wrong page input'));
+    }
+
     const questions = await prisma.question.findMany({
-      where: { receiverName: userName, status: type as Status },
+      where: questionQuery,
       select: {
         id: true,
         question: true,
@@ -30,35 +48,18 @@ export default async function (
         createAt: true,
         likeCount: true,
       },
+      skip: normalizedItemsPerPage * (normalizedPage - 1),
+      take: normalizedItemsPerPage,
       orderBy: { createAt: 'desc' },
     });
 
-    const normalizedItemsPerPage: number = +itemsPerPage | 0;
-    const normalizedPage: number = +page;
-
-    if (
-      normalizedPage < 0 ||
-      normalizedItemsPerPage < 0 ||
-      normalizedItemsPerPage * (normalizedPage - 1) > questions.length
-    ) {
-      return next(new HttpException(400, 'wrong page input'));
-    }
-
-    const slicedQuestions = questions.splice(
-      normalizedItemsPerPage * (normalizedPage - 1),
-      normalizedItemsPerPage
-    );
-
-    const maxPage: number = Math.ceil(
-      questions.length / normalizedItemsPerPage
-    );
     const bearerToken: string = req.headers.authorization;
 
     if (bearerToken) {
-      const currentUserName = verify(bearerToken.split(' ')[1]);
+      const currentUserName: string = verify(bearerToken.split(' ')[1]);
       const result: (typeof questions[0] & { liked: boolean })[] = [];
 
-      for (const question of slicedQuestions) {
+      for (const question of questions) {
         const liked = await prisma.like.findFirst({
           where: { questionId: question.id, userName: currentUserName },
         });
@@ -67,9 +68,9 @@ export default async function (
       }
 
       res.jsend.success({ question: [...result], maxPage });
+      return;
     }
-
-    res.jsend.success({ question: [...slicedQuestions], maxPage });
+    res.jsend.success({ question: [...questions], maxPage });
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       return next(new HttpException(401, 'expired token', error));
