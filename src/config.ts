@@ -7,4 +7,5 @@ export default {
   port: process.env.SERVER_PORT!,
   jwtSecret: process.env.JWT_SECRET!,
   cookieSecret: process.env.COOKIE_SECRET!,
+  imgbbApi: process.env.IMAGEBB_API!,
 };

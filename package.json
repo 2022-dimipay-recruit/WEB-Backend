@@ -18,6 +18,7 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
+    "axios": "^0.27.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
@@ -28,7 +29,9 @@
     "joi": "^17.6.0",
     "jsend": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.5-lts.1",
     "prisma": "^3.14.0",
+    "sharp": "^0.30.6",
     "winston": "^3.7.2",
     "winston-daily-rotate-file": "^4.6.1",
     "xss": "^1.0.13"
@@ -36,7 +39,9 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
     "@types/jsend": "^1.0.29",
+    "@types/multer": "^1.4.7",
     "@types/node": "^17.0.35",
+    "@types/sharp": "^0.30.4",
     "nodemon": "^2.0.16",
     "prettier": "^2.6.2",
     "ts-node": "^10.8.0",
