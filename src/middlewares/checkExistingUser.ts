@@ -6,12 +6,12 @@ import type { Request, Response, NextFunction } from 'express';
 import { UserParams } from 'types';
 
 export default async function (
-  req: Request<UserParams>,
+  req: Request<any, any, any, UserParams>,
   _: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const userName = req.params.name;
+    const userName = req.query.name;
 
     await prisma.profile.findUnique({
       rejectOnNotFound: true,
