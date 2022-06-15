@@ -3,6 +3,7 @@ import { createService } from 'routes';
 
 import question from './question.controller';
 import answer from './answer.controller';
+import like from './like.controller';
 
 export default createService({
   name: 'post',
@@ -33,6 +34,12 @@ export default createService({
           .required(),
       },
       handler: answer,
+    },
+    {
+      method: 'post',
+      path: '/like',
+      needAuth: true,
+      handler: like,
     },
   ],
 });
