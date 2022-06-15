@@ -33,3 +33,5 @@ export type UserQuestionQuery = Partial<
 export interface LikeBody {
   questionId: Like['questionId'];
 }
+
+export type FindUserParams = Partial<Record<'name' | 'preview', string>>;
