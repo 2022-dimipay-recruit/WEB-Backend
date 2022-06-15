@@ -35,6 +35,7 @@ export default async function (
       rejectOnNotFound: true,
     });
 
+    console.log(userName);
     signTokens(res, userName);
   } catch (error) {
     return next(new HttpException(401, 'login fail', error));

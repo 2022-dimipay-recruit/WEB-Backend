@@ -11,7 +11,6 @@ export default async function (
   next: NextFunction
 ): Promise<void> {
   const userName = req.user;
-  console.log(userName);
 
   try {
     const questions: { [key: string]: number } = {};

@@ -1,4 +1,4 @@
-import { Type, Status } from '@prisma/client';
+import { Type, Status, Like } from '@prisma/client';
 
 export type HTTPMethod =
   | 'all'
@@ -29,3 +29,7 @@ export interface UserParams {
 export type UserQuestionQuery = Partial<
   Record<'type' | 'page' | 'itemsPerPage', string>
 >;
+
+export interface LikeBody {
+  questionId: Like['questionId'];
+}
