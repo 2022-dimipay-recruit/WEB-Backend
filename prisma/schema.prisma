@@ -21,14 +21,16 @@ model User {
 }
 
 model Profile {
-  id       String     @id
-  user     User       @relation(fields: [id], references: [id])
-  email    String     @unique
-  userName String     @unique // range of user name length should be set
-  name     String // this also need length limit
-  image    String     @default("/defaultProfile.jpg")
-  asked    Question[] @relation("ask")
-  received Question[] @relation("receive")
+  id        String     @id
+  user      User       @relation(fields: [id], references: [id])
+  email     String     @unique
+  userName  String     @unique // range of user name length should be set
+  name      String // this also need length limit
+  image     String     @default("/defaultProfile.jpg")
+  asked     Question[] @relation("ask")
+  received  Question[] @relation("receive")
+  following Follow[]   @relation("following")
+  follower  Follow[]   @relation("follower")
 }
 
 model Question {
@@ -52,6 +54,16 @@ model Like {
   userName   String
 
   @@id([questionId, userName])
+}
+
+model Follow {
+  userName         String
+  followName       String
+  startFollowingAt DateTime @default(now())
+  following        Profile  @relation("following", fields: [userName], references: [userName])
+  follower         Profile  @relation("follower", fields: [followName], references: [userName])
+
+  @@id([userName, followName])
 }
 
 enum Type {

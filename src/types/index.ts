@@ -1,4 +1,4 @@
-import { Type, Status, Like } from '@prisma/client';
+import { Type, Status, Like, Profile, User } from '@prisma/client';
 
 export type HTTPMethod =
   | 'all'
@@ -35,3 +35,11 @@ export interface LikeBody {
 }
 
 export type FindUserParams = Partial<Record<'keyword' | 'preview', string>>;
+
+export type SignUpBody = Partial<Profile & Pick<User, 'password'>>;
+
+export type FollowBody = Partial<Record<'followName', string>>;
+
+export type FollowListQuery = Partial<
+  Record<'type' | 'name' | 'startsFrom' | 'take', string>
+>;
