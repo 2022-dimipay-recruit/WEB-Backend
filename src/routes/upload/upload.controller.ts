@@ -13,7 +13,7 @@ export default async function (
 ): Promise<void> {
   try {
     const resizedImage = await sharp(req.file.buffer)
-      .resize(200, 200)
+      .resize(100, 100)
       .toBuffer();
 
     const {
