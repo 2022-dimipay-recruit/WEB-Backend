@@ -32,8 +32,7 @@ model Profile {
 }
 
 model Question {
-  id           Int      @id @default(autoincrement())
-  postId       Int
+  id           String   @id @default(cuid())
   createAt     DateTime @default(now())
   type         Type     @default(anonymous)
   status       Status   @default(received)
@@ -49,7 +48,7 @@ model Question {
 }
 
 model Like {
-  questionId Int
+  questionId String
   userName   String
 
   @@id([questionId, userName])

@@ -24,22 +24,17 @@ export default async function (
       return next(new HttpException(400, 'wrong receiver'));
     }
 
-    const newQuestionId: number =
-      (await prisma.question.count({
-        where: { receiverName: receiver },
-      })) + 1;
-
-    await prisma.question.create({
+    const { id } = await prisma.question.create({
       data: {
         type,
         question: xss(post),
         receiverName: receiver,
         authorName: type === 'onymous' ? userName : null,
-        postId: newQuestionId,
       },
+      select: { id: true },
     });
 
-    res.jsend.success({ id: newQuestionId });
+    res.jsend.success({ id });
   } catch (error) {
     if (error.code === 'P2003') {
       return next(new HttpException(400, 'invalid receiver id', error));

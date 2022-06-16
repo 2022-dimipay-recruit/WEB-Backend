@@ -9,16 +9,11 @@ export default async function (
   res: Response,
   next: NextFunction
 ) {
-  const userName = req.user;
   const { questionId, post, status } = req.body;
 
   try {
     const { count } = await prisma.question.updateMany({
-      where: {
-        receiverName: userName,
-        postId: +questionId,
-        status: 'received',
-      },
+      where: { id: questionId, status: 'received' },
       data: {
         answer: status === 'accepted' ? post : '',
         status,
