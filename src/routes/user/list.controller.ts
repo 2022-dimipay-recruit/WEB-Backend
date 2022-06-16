@@ -8,12 +8,20 @@ import type { Request, Response, NextFunction } from 'express';
 import type { UserParams, UserQuestionQuery } from 'types';
 
 export default async function (
-  req: Request<UserParams, any, any, UserQuestionQuery>,
+  req: Request<any, any, any, UserQuestionQuery>,
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const userName = req.params.name;
-  const { type = 'received', itemsPerPage = 4, page = 1 } = req.query;
+  const {
+    type = 'received',
+    itemsPerPage = 4,
+    page = 1,
+    name: userName,
+  } = req.query;
+
+  if (typeof userName === 'undefined') {
+    return next(new HttpException(400, 'no userName'));
+  }
 
   if (!Object.keys(Status).includes(type)) {
     return next(new HttpException(400, 'wrong type'));
@@ -33,7 +41,7 @@ export default async function (
     if (
       normalizedPage < 0 ||
       normalizedItemsPerPage < 0 ||
-      normalizedItemsPerPage * maxPage < normalizedPage
+      normalizedPage > normalizedItemsPerPage * maxPage + 1
     ) {
       return next(new HttpException(400, 'wrong page input'));
     }

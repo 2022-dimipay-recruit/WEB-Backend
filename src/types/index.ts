@@ -27,7 +27,7 @@ export interface UserParams {
 }
 
 export type UserQuestionQuery = Partial<
-  Record<'type' | 'page' | 'itemsPerPage', string>
+  Record<'type' | 'page' | 'itemsPerPage' | 'name', string>
 >;
 
 export interface LikeBody {
