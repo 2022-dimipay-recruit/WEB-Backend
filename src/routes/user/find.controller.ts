@@ -16,7 +16,7 @@ export default async function (
         where: {
           OR: [
             { userName: { contains: keyword } },
-            { id: { contains: keyword } },
+            { name: { contains: keyword } },
           ],
         },
         take: req.query.preview === 'true' ? 10 : undefined,
