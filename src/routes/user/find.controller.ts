@@ -10,10 +10,16 @@ export default async function (
   next: NextFunction
 ) {
   try {
+    const keyword = req.query.keyword;
     res.jsend.success(
       await prisma.profile.findMany({
-        where: { userName: { contains: req.query.name } },
-        take: req.query.preview === 'true' ? 5 : undefined,
+        where: {
+          OR: [
+            { userName: { contains: keyword } },
+            { id: { contains: keyword } },
+          ],
+        },
+        take: req.query.preview === 'true' ? 10 : undefined,
         select: {
           email: true,
           userName: true,
