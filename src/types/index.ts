@@ -19,7 +19,6 @@ export interface QuestionBody {
 export interface AsnwerBody {
   questionId: string;
   post: string;
-  status: Status;
 }
 
 export type Query<T extends string> = Partial<Record<T, string>>;
@@ -33,4 +32,5 @@ export type UserQuestionQuery = Query<
 >;
 export type LikeBody = Query<'questionId'>;
 export type FindUserParams = Query<'keyword' | 'preview'>;
-export type DeleteQuestion = Query<'questionId'>;
+export type DeleteQuestion = LikeBody;
+export type RejectQuestion = LikeBody;
