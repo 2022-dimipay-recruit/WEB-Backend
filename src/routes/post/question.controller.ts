@@ -1,25 +1,23 @@
 import xss from 'xss';
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions/index';
+import { verify } from 'resources/token';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { QuestionBody } from 'types';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 export default async function (
-  req: Request<unknown, unknown, QuestionBody>,
+  req: Request<any, any, QuestionBody>,
   res: Response,
   next: NextFunction
 ) {
-  const userName = req.user;
-  console.log('name', userName);
-  /**
-   * @type {string} receiver - receiver's userName(unique value)
-   * @type {string} post - question body
-   * @type {(anonymous|onymous)} type
-   */
-  const { receiver, post, type } = req.body;
-
   try {
+    const authorization = req.headers.authorization;
+    const userName = authorization ? verify(authorization.split(' ')[1]) : null;
+
+    const { receiver, post, type } = req.body;
+
     if (receiver === userName) {
       return next(new HttpException(400, 'wrong receiver'));
     }
@@ -29,7 +27,7 @@ export default async function (
         type,
         question: xss(post),
         receiverName: receiver,
-        authorName: type === 'onymous' ? userName : null,
+        authorName: userName ? (type === 'onymous' ? userName : null) : null,
       },
       select: { id: true },
     });
@@ -38,6 +36,10 @@ export default async function (
   } catch (error) {
     if (error.code === 'P2003') {
       return next(new HttpException(400, 'invalid receiver id', error));
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      return next(new HttpException(401, 'wrong token', error));
     }
 
     next(new HttpException(500, 'server error', error));
