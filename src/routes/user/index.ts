@@ -7,6 +7,7 @@ import list from './list.controller';
 import find from './find.controller';
 import follow from './follow.controller';
 import followList from './followList.controller';
+import myQuestions from './myQuestions.controller';
 
 export default createService({
   name: 'user',
@@ -52,6 +53,12 @@ export default createService({
       path: '/follow/list',
       needAuth: false,
       handler: followList,
+    },
+    {
+      method: 'get',
+      path: '/me/questions',
+      needAuth: true,
+      handler: myQuestions,
     },
   ],
 });
