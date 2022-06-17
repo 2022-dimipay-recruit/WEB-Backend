@@ -51,7 +51,7 @@ export default async function (
       select: {
         id: true,
         question: true,
-        answer: type === 'received',
+        answer: type === 'accepted',
         authorName: true,
         createAt: true,
         likeCount: true,

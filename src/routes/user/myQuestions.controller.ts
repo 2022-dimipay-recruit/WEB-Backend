@@ -12,11 +12,10 @@ export default async function (
 
   try {
     const questions = await prisma.question.findMany({
-      where: { authorName: userName },
+      where: { authorName: userName, status: 'accepted' },
       select: {
         createAt: true,
         type: true,
-        status: true,
         question: true,
         answer: true,
         receiver: {
