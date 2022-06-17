@@ -1,9 +1,12 @@
 import { createService } from 'routes';
 import checkExistingUser from 'middlewares/checkExistingUser';
+import Joi from 'joi';
 
 import user from './user.controller';
 import list from './list.controller';
 import find from './find.controller';
+import follow from './follow.controller';
+import followList from './followList.controller';
 
 export default createService({
   name: 'user',
@@ -34,6 +37,21 @@ export default createService({
       path: '/find',
       needAuth: false,
       handler: find,
+    },
+    {
+      method: 'post',
+      path: '/follow',
+      needAuth: true,
+      handler: follow,
+      validateSchema: {
+        followName: Joi.string().required(),
+      },
+    },
+    {
+      method: 'get',
+      path: '/follow/list',
+      needAuth: false,
+      handler: followList,
     },
   ],
 });

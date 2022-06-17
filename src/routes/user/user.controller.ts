@@ -34,7 +34,20 @@ export default async function (
       },
     });
 
-    res.jsend.success({ questions: { ...questions }, ...userInformation });
+    const following = await prisma.follow.count({
+      where: { userName },
+    });
+
+    const follower = await prisma.follow.count({
+      where: { followName: userName },
+    });
+
+    res.jsend.success({
+      questions: { ...questions },
+      ...userInformation,
+      following,
+      follower,
+    });
   } catch (error) {
     return next(new HttpException(500, 'server error', error));
   }
