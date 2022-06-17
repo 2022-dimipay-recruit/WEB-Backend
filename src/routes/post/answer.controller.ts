@@ -13,7 +13,12 @@ export default async function (
 
   try {
     const { count } = await prisma.question.updateMany({
-      where: { id: questionId, status: 'received' },
+      where: {
+        OR: [
+          { id: questionId, status: 'received' },
+          { id: questionId, status: 'accepted' },
+        ],
+      },
       data: {
         answer: post,
         status: 'accepted',
