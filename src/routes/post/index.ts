@@ -40,6 +40,9 @@ export default createService({
       path: '/like',
       needAuth: true,
       handler: like,
+      validateSchema: {
+        questionId: Joi.string().required(),
+      },
     },
   ],
 });
