@@ -16,7 +16,7 @@ export default async function (
       where: { id: questionId, status: 'received' },
       data: {
         answer: post,
-        status: 'received',
+        status: 'accepted',
       },
     });
 

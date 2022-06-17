@@ -31,9 +31,6 @@ export default createService({
       validateSchema: {
         questionId: Joi.string().required(),
         post: Joi.string().min(2).max(300),
-        status: Joi.string()
-          .regex(/^(accepted|rejected)$/)
-          .required(),
       },
       handler: answer,
     },

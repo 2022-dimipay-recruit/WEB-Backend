@@ -27,7 +27,7 @@ export default async function (
         type,
         question: xss(post),
         receiverName: receiver,
-        authorName: userName ? (type === 'onymous' ? userName : null) : null,
+        authorName: userName ? userName : null,
       },
       select: { id: true },
     });

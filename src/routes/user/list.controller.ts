@@ -46,19 +46,28 @@ export default async function (
       return next(new HttpException(400, 'wrong page input'));
     }
 
-    const questions = await prisma.question.findMany({
-      where: questionQuery,
-      select: {
-        id: true,
-        question: true,
-        answer: type === 'received',
-        authorName: true,
-        createAt: true,
-        likeCount: true,
-      },
-      skip: normalizedItemsPerPage * (normalizedPage - 1),
-      take: normalizedItemsPerPage,
-      orderBy: { createAt: 'desc' },
+    const questions = (
+      await prisma.question.findMany({
+        where: questionQuery,
+        select: {
+          id: true,
+          question: true,
+          type: true,
+          answer: type === 'accepted',
+          authorName: true,
+          createAt: true,
+          likeCount: true,
+        },
+        skip: normalizedItemsPerPage * (normalizedPage - 1),
+        take: normalizedItemsPerPage,
+        orderBy: { createAt: 'desc' },
+      })
+    ).map((question) => {
+      if (question.type === 'anonymous') {
+        question.authorName = null;
+      }
+      delete question.type;
+      return question;
     });
 
     const bearerToken: string = req.headers.authorization;
