@@ -4,6 +4,8 @@ import { createService } from 'routes';
 import question from './question.controller';
 import answer from './answer.controller';
 import like from './like.controller';
+import deleteQuestion from './delete.controller';
+import rejectQuestion from './reject.controller';
 
 export default createService({
   name: 'post',
@@ -40,6 +42,24 @@ export default createService({
       path: '/like',
       needAuth: true,
       handler: like,
+      validateSchema: {
+        questionId: Joi.string().required(),
+      },
+    },
+    {
+      method: 'delete',
+      path: '/question',
+      needAuth: true,
+      handler: deleteQuestion,
+      validateSchema: {
+        questionId: Joi.string().required(),
+      },
+    },
+    {
+      method: 'patch',
+      path: '/question',
+      needAuth: true,
+      handler: rejectQuestion,
       validateSchema: {
         questionId: Joi.string().required(),
       },
