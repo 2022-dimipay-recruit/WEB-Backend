@@ -14,7 +14,7 @@ export default createService({
     {
       method: 'post',
       path: '/question',
-      needAuth: true,
+      needAuth: false,
       validateSchema: {
         receiver: Joi.string().required(),
         post: Joi.string().min(2).max(300).required(),
