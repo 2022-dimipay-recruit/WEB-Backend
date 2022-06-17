@@ -9,18 +9,15 @@ export default async function (
   res: Response,
   next: NextFunction
 ): Promise<void> {
-  const { type, name: userName, startsFrom = 1, take = 10 } = req.query;
+  const { type, name: userName } = req.query;
 
   if (typeof userName === 'undefined') {
     return next(new HttpException(400, 'no name'));
   }
 
-  const takeQuery = { skip: +startsFrom - 1, take: +take };
-
   const send = (list: string[]) =>
     res.jsend.success({
       list,
-      next: list.length === +take ? +startsFrom + list.length : null,
     });
 
   if (type === 'following') {
@@ -29,9 +26,8 @@ export default async function (
         where: { userName },
         select: { followName: true },
         orderBy: { startFollowingAt: 'desc' },
-        ...takeQuery,
       })
-    ).map((follow) => Object.values(follow)[0]);
+    ).map(({ followName }) => followName);
 
     send(following);
   } else if (type === 'follower') {
@@ -40,9 +36,8 @@ export default async function (
         where: { followName: userName },
         select: { userName: true },
         orderBy: { startFollowingAt: 'desc' },
-        ...takeQuery,
       })
-    ).map((follow) => Object.values(follow)[0]);
+    ).map(({ userName }) => userName);
 
     send(follower);
   } else {

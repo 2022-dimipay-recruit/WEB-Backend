@@ -12,6 +12,10 @@ export default async function (
   const userName = req.user;
   const { followName } = req.body;
 
+  if (userName === followName) {
+    return next(new HttpException(400, 'wrong follow name'));
+  }
+
   try {
     const isFollowing = await prisma.follow.findUnique({
       where: {
