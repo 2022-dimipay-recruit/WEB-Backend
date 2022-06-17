@@ -19,27 +19,23 @@ export interface QuestionBody {
 export interface AsnwerBody {
   questionId: string;
   post: string;
-  status: Status;
 }
+
+export type Query<T extends string> = Partial<Record<T, string>>;
 
 export interface UserParams {
   name: string;
 }
 
-export type UserQuestionQuery = Partial<
-  Record<'type' | 'page' | 'itemsPerPage' | 'name', string>
+export type UserQuestionQuery = Query<
+  'type' | 'page' | 'itemsPerPage' | 'name'
 >;
-
-export interface LikeBody {
-  questionId: Like['questionId'];
-}
-
-export type FindUserParams = Partial<Record<'keyword' | 'preview', string>>;
 
 export type SignUpBody = Partial<Profile & Pick<User, 'password'>>;
-
-export type FollowBody = Partial<Record<'followName', string>>;
-
-export type FollowListQuery = Partial<
-  Record<'type' | 'name' | 'startsFrom' | 'take', string>
->;
+export type LikeBody = Query<'questionId'>;
+export type FindUserParams = Query<'keyword' | 'preview'>;
+export type DeleteQuestion = LikeBody;
+export type RejectQuestion = LikeBody;
+export type FollowListQuery = Query<'type' | 'name' | 'startsFrom' | 'take'>
+export type FollowBody = Query<'followName'>
+export type FindUserParams = Query<'keyword' | 'preview'>

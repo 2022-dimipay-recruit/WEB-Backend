@@ -46,6 +46,8 @@ model Question {
   receiver     Profile  @relation("receive", fields: [receiverName], references: [userName])
   likeCount    Int      @default(0)
 
+  @@unique([id, receiverName])
+  @@unique([id, receiverName, status])
   @@map("questions")
 }
 
