@@ -9,14 +9,14 @@ export default async function (
   res: Response,
   next: NextFunction
 ) {
-  const { questionId, post, status } = req.body;
+  const { questionId, post } = req.body;
 
   try {
     const { count } = await prisma.question.updateMany({
       where: { id: questionId, status: 'received' },
       data: {
-        answer: status === 'accepted' ? post : '',
-        status,
+        answer: post,
+        status: 'received',
       },
     });
 
