@@ -1,5 +1,6 @@
 import { HttpException } from 'exceptions';
 import prisma from 'resources/db';
+import liked from 'resources/liked';
 
 import type { Request, Response, NextFunction } from 'express';
 import { LikeBody } from 'types';
@@ -19,11 +20,7 @@ export default async function (
     });
 
   try {
-    const liked: boolean = !!(await prisma.like.findFirst({
-      where: { userName, questionId },
-    }));
-
-    if (liked) {
+    if (await liked(userName, questionId)) {
       await prisma.like.deleteMany({
         where: { questionId, userName },
       });

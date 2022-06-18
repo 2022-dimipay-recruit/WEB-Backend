@@ -3,6 +3,7 @@ import { HttpException } from 'exceptions/index';
 import { Status } from '@prisma/client';
 import prisma from 'resources/db';
 import { TokenExpiredError } from 'jsonwebtoken';
+import liked from 'resources/liked';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { UserParams, UserQuestionQuery } from 'types';
@@ -77,11 +78,8 @@ export default async function (
       const result: (typeof questions[0] & { liked: boolean })[] = [];
 
       for (const question of questions) {
-        const liked = await prisma.like.findFirst({
-          where: { questionId: question.id, userName: currentUserName },
-        });
-
-        result.push({ ...question, liked: liked !== null });
+        const isLiked = await liked(question.id, currentUserName);
+        result.push({ ...question, liked: isLiked !== null });
       }
 
       res.jsend.success({ question: [...result], maxPage });
