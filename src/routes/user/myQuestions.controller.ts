@@ -35,7 +35,6 @@ export default async function (
       question['liked'] = !!(await prisma.like.findFirst({
         where: { userName, questionId: question.id },
       }));
-      delete question.id;
     }
 
     res.jsend.success([...questions]);
