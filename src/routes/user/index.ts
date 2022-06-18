@@ -8,6 +8,7 @@ import find from './find.controller';
 import follow from './follow.controller';
 import followList from './followList.controller';
 import myQuestions from './myQuestions.controller';
+import feed from './feed.controller';
 
 export default createService({
   name: 'user',
@@ -59,6 +60,12 @@ export default createService({
       path: '/me/questions',
       needAuth: true,
       handler: myQuestions,
+    },
+    {
+      method: 'get',
+      path: '/feed',
+      needAuth: false,
+      handler: feed,
     },
   ],
 });

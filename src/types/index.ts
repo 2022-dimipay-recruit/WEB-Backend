@@ -36,6 +36,20 @@ export type LikeBody = Query<'questionId'>;
 export type FindUserParams = Query<'keyword' | 'preview'>;
 export type DeleteQuestion = LikeBody;
 export type RejectQuestion = LikeBody;
-export type FollowListQuery = Query<'type' | 'name' | 'startsFrom' | 'take'>
-export type FollowBody = Query<'followName'>
-export type FindUserParams = Query<'keyword' | 'preview'>
+export type FollowListQuery = Query<'type' | 'name' | 'startsFrom' | 'take'>;
+export type FollowBody = Query<'followName'>;
+
+export type QuestionList = {
+  id: string;
+  createAt: Date;
+  type: Type;
+  question: string;
+  answer: string;
+  receiver: {
+    userName: string;
+    image: string;
+    name: string;
+  };
+  likeCount: number;
+  liked?: boolean;
+}[];

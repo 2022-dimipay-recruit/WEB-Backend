@@ -22,6 +22,7 @@ export default async function (
       data: {
         answer: post,
         status: 'accepted',
+        answerAt: new Date(),
       },
     });
 
