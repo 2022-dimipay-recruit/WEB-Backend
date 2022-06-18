@@ -2,6 +2,7 @@ import prisma from 'resources/db';
 import { HttpException } from 'exceptions';
 
 import type { Request, Response, NextFunction } from 'express';
+import type { QuestionList } from 'types';
 
 export default async function (
   req: Request,
@@ -11,9 +12,10 @@ export default async function (
   const userName = req.user;
 
   try {
-    const questions = await prisma.question.findMany({
+    const questions: QuestionList = await prisma.question.findMany({
       where: { authorName: userName, status: 'accepted' },
       select: {
+        id: true,
         createAt: true,
         type: true,
         question: true,
@@ -28,6 +30,13 @@ export default async function (
         likeCount: true,
       },
     });
+
+    for (const question of questions) {
+      question['liked'] = !!(await prisma.like.findFirst({
+        where: { userName, questionId: question.id },
+      }));
+      delete question.id;
+    }
 
     res.jsend.success([...questions]);
   } catch (error) {
