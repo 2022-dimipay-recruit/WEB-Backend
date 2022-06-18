@@ -34,17 +34,18 @@ model Profile {
 }
 
 model Question {
-  id           String   @id @default(cuid())
-  createAt     DateTime @default(now())
-  type         Type     @default(anonymous)
-  status       Status   @default(received)
-  question     String   @db.VarChar(300) // max content length is 300
-  answer       String   @default("") @db.VarChar(300)
+  id           String    @id @default(cuid())
+  createAt     DateTime  @default(now())
+  answerAt     DateTime?
+  type         Type      @default(anonymous)
+  status       Status    @default(received)
+  question     String    @db.VarChar(300) // max content length is 300
+  answer       String    @default("") @db.VarChar(300)
   authorName   String?
   receiverName String
-  author       Profile? @relation("ask", fields: [authorName], references: [userName])
-  receiver     Profile  @relation("receive", fields: [receiverName], references: [userName])
-  likeCount    Int      @default(0)
+  author       Profile?  @relation("ask", fields: [authorName], references: [userName])
+  receiver     Profile   @relation("receive", fields: [receiverName], references: [userName])
+  likeCount    Int       @default(0)
 
   @@unique([id, receiverName])
   @@unique([id, receiverName, status])
