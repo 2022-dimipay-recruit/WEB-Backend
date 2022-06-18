@@ -60,7 +60,8 @@ export default async function (
         },
         skip: normalizedItemsPerPage * (normalizedPage - 1),
         take: normalizedItemsPerPage,
-        orderBy: { createAt: 'desc' },
+        orderBy:
+          type === 'accepted' ? { answerAt: 'desc' } : { createAt: 'desc' },
       })
     ).map((question) => {
       if (question.type === 'anonymous') {
