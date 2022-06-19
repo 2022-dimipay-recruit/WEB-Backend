@@ -32,6 +32,7 @@ model Profile {
   following    Follow[]       @relation("following")
   follower     Follow[]       @relation("follower")
   Notification Notification[]
+  Report       Report[]
 }
 
 model Question {
@@ -47,6 +48,7 @@ model Question {
   author       Profile?  @relation("ask", fields: [authorName], references: [userName])
   receiver     Profile   @relation("receive", fields: [receiverName], references: [userName])
   likeCount    Int       @default(0)
+  Report       Report?
 
   @@unique([id, receiverName])
   @@unique([id, status])
@@ -79,6 +81,17 @@ model Notification {
   message  String
   read     Boolean  @default(false)
   User     Profile  @relation(fields: [userName], references: [userName])
+}
+
+model Report {
+  id       String
+  message  String   @db.VarChar(300)
+  authorId String
+  createAt DateTime @default(now())
+  Author   Profile  @relation(fields: [authorId], references: [id])
+  Question Question @relation(fields: [id], references: [id])
+
+  @@id([id])
 }
 
 enum Type {
