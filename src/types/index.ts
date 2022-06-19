@@ -53,3 +53,37 @@ export type QuestionList = {
   likeCount: number;
   liked?: boolean;
 }[];
+
+export type FollowingFeed = {
+  follower: {
+    userName: string;
+    name: string;
+    image: string;
+  };
+  following: {
+    received: {
+      id: string;
+      createAt: Date;
+      question: string;
+      answer: string;
+      authorName: string;
+      likeCount: number;
+      liked?: boolean;
+    }[];
+  };
+}[];
+
+export type RandomFeed = {
+  id: string;
+  createAt: Date;
+  question: string;
+  answer: string;
+  authorName: string;
+  likeCount: number;
+  liked?: boolean;
+  receiver: {
+    userName: string;
+    name: string;
+    image: string;
+  };
+}[];

@@ -2,8 +2,10 @@ import { HttpException } from 'exceptions/index';
 import { verify } from 'resources/token';
 import prisma from 'resources/db';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import liked from 'resources/liked';
 
 import type { Request, Response, NextFunction } from 'express';
+import type { FollowingFeed, RandomFeed } from 'types';
 
 export default async function (
   req: Request,
@@ -20,7 +22,7 @@ export default async function (
     const feeds: { [key: string]: any } = {};
 
     if (userName) {
-      const followingFeed = (
+      const followingFeed: FollowingFeed = (
         await prisma.follow.findMany({
           where: { userName },
           select: {
@@ -39,10 +41,12 @@ export default async function (
                     answerAt: { gte: today },
                   },
                   select: {
+                    id: true,
                     createAt: true,
                     question: true,
                     answer: true,
                     authorName: true,
+                    likeCount: true,
                   },
                 },
               },
@@ -51,19 +55,29 @@ export default async function (
         })
       ).filter(({ following: { received } }) => received.length);
 
+      for (const {
+        following: { received },
+      } of followingFeed) {
+        for (const post of received) {
+          post['liked'] = await liked(userName, post.id);
+        }
+      }
+
       feeds['followingFeed'] = followingFeed;
     }
 
-    const randomFeed = await prisma.question.findMany({
+    const randomFeed: RandomFeed = await prisma.question.findMany({
       where: {
         status: 'accepted',
-        createAt: { gte: today },
+        answerAt: { gte: today },
       },
       select: {
+        id: true,
         createAt: true,
         question: true,
         answer: true,
         authorName: true,
+        likeCount: true,
         receiver: {
           select: {
             userName: true,
@@ -75,6 +89,13 @@ export default async function (
       orderBy: { answerAt: 'asc' },
       take: 10,
     });
+
+    // attatch liked key
+    if (userName) {
+      for (const feed of randomFeed) {
+        feed['liked'] = await liked(userName, feed.id);
+      }
+    }
 
     feeds['randomFeed'] = randomFeed;
 
