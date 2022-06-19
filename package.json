@@ -9,7 +9,7 @@
     "lint:fix": "eslint --fix src/**/*.ts",
     "test": "jest --detectOpenHandles --forceExit",
     "dev": "cross-env NODE_ENV=develop NODE_PATH=./src nodemon src/index.ts",
-    "serve": "npx run prisma:deploy && npm run build && node dist/index.js",
+    "serve": "npm run prisma:deploy && npm run build && node dist/index.js",
     "start": "npm run serve",
     "prisma:deploy": "npx prisma migrate dev",
     "prisma:push": "npx prisma db push && npx prisma generate"
