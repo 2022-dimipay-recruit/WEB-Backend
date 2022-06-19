@@ -26,7 +26,7 @@ model Profile {
   email        String         @unique
   userName     String         @unique // range of user name length should be set
   name         String // this also need length limit
-  image        String         @default("/defaultProfile.jpg")
+  image        String         @default("https://i.ibb.co/NVjrcN3/default-Profile.jpg")
   asked        Question[]     @relation("ask")
   received     Question[]     @relation("receive")
   following    Follow[]       @relation("following")
