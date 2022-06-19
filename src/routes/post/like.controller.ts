@@ -1,3 +1,4 @@
+import addNotification from 'resources/addNotification';
 import { HttpException } from 'exceptions';
 import prisma from 'resources/db';
 import liked from 'resources/liked';
@@ -30,6 +31,22 @@ export default async function (
         data: { questionId, userName },
       });
       await updateLikeCount(1);
+
+      // add notification
+      const question = await prisma.question.findUnique({
+        where: { id: questionId },
+        select: { question: true, author: true, receiver: true, status: true },
+      });
+      await addNotification(
+        question.author.userName,
+        `'${userName}'님이 '${question}'질문에 좋아요를 눌렀어요`
+      );
+      if (question.status === 'accepted') {
+        await addNotification(
+          question.receiver.userName,
+          `'${userName}'님이 '${question}'답변에 좋아요를 눌렀어요`
+        );
+      }
     }
 
     res.jsend.success({});

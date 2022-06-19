@@ -1,5 +1,6 @@
 import { HttpException } from 'exceptions/index';
 import prisma from 'resources/db';
+import addNotifications from 'resources/addNotification';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { FollowBody } from 'types';
@@ -30,6 +31,12 @@ export default async function (
       await prisma.follow.create({
         data: { followName, userName },
       });
+
+      // add notification
+      await addNotifications(
+        followName,
+        `${userName}님이 팔로우하기 시작했어요!`
+      );
     } else {
       await prisma.follow.delete({
         where: {

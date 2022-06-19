@@ -2,6 +2,7 @@ import xss from 'xss';
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions/index';
 import { verify } from 'resources/token';
+import addNotification from 'resources/addNotification';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { QuestionBody } from 'types';
@@ -17,6 +18,7 @@ export default async function (
     const userName = authorization ? verify(authorization.split(' ')[1]) : null;
 
     const { receiver, post, type } = req.body;
+    const XSSPost = xss(post);
 
     if (receiver === userName) {
       return next(new HttpException(400, 'wrong receiver'));
@@ -25,12 +27,20 @@ export default async function (
     const { id } = await prisma.question.create({
       data: {
         type,
-        question: xss(post),
+        question: XSSPost,
         receiverName: receiver,
         authorName: userName ? userName : null,
       },
       select: { id: true },
     });
+
+    await addNotification(
+      receiver,
+      `${
+        type === 'anonymous' || !userName ? '누군가' : `${userName}님이`
+      } 질문을 남겨줬어요`,
+      XSSPost
+    );
 
     res.jsend.success({ id });
   } catch (error) {

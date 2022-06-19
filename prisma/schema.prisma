@@ -21,16 +21,17 @@ model User {
 }
 
 model Profile {
-  id        String     @id
-  user      User       @relation(fields: [id], references: [id])
-  email     String     @unique
-  userName  String     @unique // range of user name length should be set
-  name      String // this also need length limit
-  image     String     @default("/defaultProfile.jpg")
-  asked     Question[] @relation("ask")
-  received  Question[] @relation("receive")
-  following Follow[]   @relation("following")
-  follower  Follow[]   @relation("follower")
+  id           String         @id
+  user         User           @relation(fields: [id], references: [id])
+  email        String         @unique
+  userName     String         @unique // range of user name length should be set
+  name         String // this also need length limit
+  image        String         @default("/defaultProfile.jpg")
+  asked        Question[]     @relation("ask")
+  received     Question[]     @relation("receive")
+  following    Follow[]       @relation("following")
+  follower     Follow[]       @relation("follower")
+  Notification Notification[]
 }
 
 model Question {
@@ -48,6 +49,7 @@ model Question {
   likeCount    Int       @default(0)
 
   @@unique([id, receiverName])
+  @@unique([id, status])
   @@unique([id, receiverName, status])
   @@map("questions")
 }
@@ -67,6 +69,16 @@ model Follow {
   follower         Profile  @relation("follower", fields: [followName], references: [userName])
 
   @@id([userName, followName])
+}
+
+model Notification {
+  id       String   @id @default(cuid())
+  createAt DateTime @default(now())
+  userName String
+  title    String
+  message  String
+  read     Boolean  @default(false)
+  User     Profile  @relation(fields: [userName], references: [userName])
 }
 
 enum Type {
