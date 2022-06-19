@@ -9,9 +9,11 @@
     "lint:fix": "eslint --fix src/**/*.ts",
     "test": "jest --detectOpenHandles --forceExit",
     "dev": "cross-env NODE_ENV=develop NODE_PATH=./src nodemon src/index.ts",
-    "serve": "cross-env NODE_ENV=prod NODE_PATH=./dist node dist/index.js",
+    "serve": "npm run build && node dist/index.js",
+    "prisma:deploy": "npx prisma migrate",
     "prisma:push": "npx prisma db push && npx prisma generate"
   },
+  "config": {},
   "author": "오명훈 <omh02033@gmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -22,6 +24,7 @@
     "axios": "^0.27.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-bearer-token": "^2.4.0",
