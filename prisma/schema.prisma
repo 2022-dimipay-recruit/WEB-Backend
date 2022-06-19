@@ -10,24 +10,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id Int @id @default(autoincrement())
+model User {
+  id       String   @id @default(uuid())
   createAt DateTime @default(now())
-  email String @unique
-  username String @unique
-  name String
   password String
-  salt String
-  profile String @default("/defaultProfile.jpg")
+  salt     String
+  profile  Profile?
+
+  @@map("users")
 }
 
-model question {
-  id Int @id @default(autoincrement())
+model Profile {
+  id           String         @id
+  user         User           @relation(fields: [id], references: [id])
+  email        String         @unique
+  userName     String         @unique // range of user name length should be set
+  name         String // this also need length limit
+  image        String         @default("/defaultProfile.jpg")
+  asked        Question[]     @relation("ask")
+  received     Question[]     @relation("receive")
+  following    Follow[]       @relation("following")
+  follower     Follow[]       @relation("follower")
+  Notification Notification[]
+}
+
+model Question {
+  id           String    @id @default(cuid())
+  createAt     DateTime  @default(now())
+  answerAt     DateTime?
+  type         Type      @default(anonymous)
+  status       Status    @default(received)
+  question     String    @db.VarChar(300) // max content length is 300
+  answer       String    @default("") @db.VarChar(300)
+  authorName   String?
+  receiverName String
+  author       Profile?  @relation("ask", fields: [authorName], references: [userName])
+  receiver     Profile   @relation("receive", fields: [receiverName], references: [userName])
+  likeCount    Int       @default(0)
+
+  @@unique([id, receiverName])
+  @@unique([id, status])
+  @@unique([id, receiverName, status])
+  @@map("questions")
+}
+
+model Like {
+  questionId String
+  userName   String
+
+  @@id([questionId, userName])
+}
+
+model Follow {
+  userName         String
+  followName       String
+  startFollowingAt DateTime @default(now())
+  following        Profile  @relation("following", fields: [userName], references: [userName])
+  follower         Profile  @relation("follower", fields: [followName], references: [userName])
+
+  @@id([userName, followName])
+}
+
+model Notification {
+  id       String   @id @default(cuid())
   createAt DateTime @default(now())
-  type String 
-  status String 
-  author Int? 
-  receiver Int 
-  question String
-  answer String 
+  userName String
+  title    String
+  message  String
+  read     Boolean  @default(false)
+  User     Profile  @relation(fields: [userName], references: [userName])
+}
+
+enum Type {
+  anonymous
+  onymous
+}
+
+enum Status {
+  received
+  accepted
+  rejected
 }
