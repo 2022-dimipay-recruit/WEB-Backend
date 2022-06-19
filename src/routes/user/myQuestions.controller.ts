@@ -1,5 +1,6 @@
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions';
+import liked from 'resources/liked';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { QuestionList } from 'types';
@@ -32,9 +33,7 @@ export default async function (
     });
 
     for (const question of questions) {
-      question['liked'] = !!(await prisma.like.findFirst({
-        where: { userName, questionId: question.id },
-      }));
+      question['liked'] = await liked(userName, question.id);
     }
 
     res.jsend.success([...questions]);
