@@ -88,3 +88,7 @@ export type RandomFeed = {
     image: string;
   };
 }[];
+
+export type Notification = Query<'type'>;
+export type NotificationDelete = Query<'id'>;
+export type NotificationChange = Query<'id' | 'read'>;

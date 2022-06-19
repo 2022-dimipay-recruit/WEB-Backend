@@ -1,5 +1,6 @@
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions';
+import addNotification from 'resources/addNotification';
 
 import type { Request, Response, NextFunction } from 'express';
 import type { AsnwerBody } from 'types';
@@ -12,22 +13,28 @@ export default async function (
   const { questionId, post } = req.body;
 
   try {
-    const { count } = await prisma.question.updateMany({
+    const update = await prisma.question.update({
       where: {
-        OR: [
-          { id: questionId, status: 'received' },
-          { id: questionId, status: 'accepted' },
-        ],
+        id: questionId,
       },
       data: {
         answer: post,
         status: 'accepted',
         answerAt: new Date(),
       },
+      select: {
+        author: true,
+        question: true,
+      },
     });
 
-    if (count === 0) {
-      return next(new HttpException(400, 'bad request'));
+    // add notification
+    if (update.author) {
+      await addNotification(
+        update.author.userName,
+        `상대방이 나의 ${update.question}질문에 답변해줬어요`,
+        post
+      );
     }
 
     res.jsend.success({});
