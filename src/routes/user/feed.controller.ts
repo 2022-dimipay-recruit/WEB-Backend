@@ -17,32 +17,38 @@ export default async function (
     const userName = authorization ? verify(authorization.split(' ')[1]) : null;
 
     const date = new Date();
-    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const allowDay = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() - 3
+    );
 
     const feeds: { [key: string]: any } = {};
+    const followingFeedIdMemo: string[] = [];
 
+    // following feed
     if (userName) {
+      // userName === following
       const followingFeed: FollowingFeed = (
         await prisma.follow.findMany({
-          where: { userName },
+          where: { userName }, // everyone followed by userName -> follower
           select: {
             follower: {
               select: {
                 userName: true,
+                email: true,
                 name: true,
                 image: true,
-              },
-            },
-            following: {
-              select: {
                 received: {
                   where: {
                     status: 'accepted',
-                    answerAt: { gte: today },
+                    answerAt: { gte: allowDay },
                   },
                   select: {
                     id: true,
                     createAt: true,
+                    answerAt: true,
+                    type: true,
                     question: true,
                     answer: true,
                     authorName: true,
@@ -53,12 +59,25 @@ export default async function (
             },
           },
         })
-      ).filter(({ following: { received } }) => received.length);
+      ).filter(({ follower: { received } }) => {
+        if (received.length) {
+          // memo for random feed overlap check
+          for (const { id } of received) {
+            followingFeedIdMemo.push(id);
+          }
+          return true;
+        }
+        return false;
+      });
 
+      // attatch liked and remove author
       for (const {
-        following: { received },
+        follower: { received },
       } of followingFeed) {
         for (const post of received) {
+          if (post.type === 'anonymous') {
+            post.authorName = null;
+          }
           post['liked'] = await liked(userName, post.id);
         }
       }
@@ -66,10 +85,11 @@ export default async function (
       feeds['followingFeed'] = followingFeed;
     }
 
-    const randomFeed: RandomFeed = await prisma.question.findMany({
+    // random feed
+    let randomFeed: RandomFeed = await prisma.question.findMany({
       where: {
         status: 'accepted',
-        answerAt: { gte: today },
+        answerAt: { gte: allowDay },
       },
       select: {
         id: true,
@@ -78,6 +98,7 @@ export default async function (
         answer: true,
         authorName: true,
         likeCount: true,
+        answerAt: true,
         receiver: {
           select: {
             userName: true,
@@ -90,8 +111,13 @@ export default async function (
       take: 10,
     });
 
-    // attatch liked key
     if (userName) {
+      // remove overlap feed
+      randomFeed = randomFeed.filter(
+        (feed) => !followingFeedIdMemo.includes(feed.id)
+      );
+
+      // attatch liked key
       for (const feed of randomFeed) {
         feed['liked'] = await liked(userName, feed.id);
       }

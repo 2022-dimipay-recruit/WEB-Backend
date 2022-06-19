@@ -57,19 +57,20 @@ export type QuestionList = {
 export type FollowingFeed = {
   follower: {
     userName: string;
-    name: string;
-    image: string;
-  };
-  following: {
     received: {
       id: string;
       createAt: Date;
+      answerAt: Date;
+      type: Type;
       question: string;
       answer: string;
       authorName: string;
       likeCount: number;
       liked?: boolean;
     }[];
+    email: string;
+    name: string;
+    image: string;
   };
 }[];
 
