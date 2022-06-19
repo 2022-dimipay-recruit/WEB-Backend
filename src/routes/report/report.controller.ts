@@ -14,7 +14,7 @@ export default async function (
 
   try {
     await prisma.report.create({
-      data: { id, message, authorId: userName },
+      data: { questionId: id, message, authorName: userName },
     });
 
     res.jsend.success({});

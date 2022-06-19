@@ -84,14 +84,14 @@ model Notification {
 }
 
 model Report {
-  id       String
-  message  String   @db.VarChar(300)
-  authorId String
-  createAt DateTime @default(now())
-  Author   Profile  @relation(fields: [authorId], references: [id])
-  Question Question @relation(fields: [id], references: [id])
+  questionId String   @unique
+  message    String   @db.VarChar(300)
+  authorName String
+  createAt   DateTime @default(now())
+  Author     Profile  @relation(fields: [authorName], references: [userName])
+  Question   Question @relation(fields: [questionId], references: [id])
 
-  @@id([id])
+  @@unique([questionId, message])
 }
 
 enum Type {
