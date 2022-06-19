@@ -10,15 +10,22 @@ export default async function (
   next: NextFunction
 ) {
   const userName = req.user;
-  const { type = 'all' } = req.query;
+  const { type } = req.query;
 
   try {
     const notifications = await prisma.notification.findMany({
-      where: { userName, read: !(type === 'new') },
-      select: { message: true, createAt: true },
+      where: { userName, read: type === 'new' ? false : undefined },
+      select: {
+        id: true,
+        createAt: true,
+        title: true,
+        message: true,
+        read: true,
+      },
+      orderBy: { createAt: 'asc' },
     });
 
-    res.jsend.success({ ...notifications });
+    res.jsend.success(notifications);
   } catch (error) {
     return next(new HttpException(500, 'server error', error));
   }
