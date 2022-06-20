@@ -80,7 +80,7 @@ export default async function (
 
       for (const question of questions) {
         const isLiked = await liked(question.id, currentUserName);
-        result.push({ ...question, liked: isLiked !== null });
+        result.push({ ...question, liked: isLiked });
       }
 
       res.jsend.success({ question: [...result], maxPage });
