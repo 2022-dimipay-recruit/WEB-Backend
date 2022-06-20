@@ -1,4 +1,3 @@
-import xss from 'xss';
 import prisma from 'resources/db';
 import { HttpException } from 'exceptions/index';
 import { verify } from 'resources/token';
@@ -18,7 +17,6 @@ export default async function (
     const userName = authorization ? verify(authorization.split(' ')[1]) : null;
 
     const { receiver, post, type } = req.body;
-    const XSSPost = xss(post);
 
     if (receiver === userName) {
       return next(new HttpException(400, 'wrong receiver'));
@@ -27,7 +25,7 @@ export default async function (
     const { id } = await prisma.question.create({
       data: {
         type,
-        question: XSSPost,
+        question: post,
         receiverName: receiver,
         authorName: userName ? userName : null,
       },
@@ -39,7 +37,7 @@ export default async function (
       `${
         type === 'anonymous' || !userName ? '누군가' : `${userName}님이`
       } 질문을 남겨줬어요`,
-      XSSPost
+      post
     );
 
     res.jsend.success({ id });
