@@ -39,12 +39,12 @@ export default async function (
       });
       await addNotification(
         question.author.userName,
-        `'${userName}'님이 '${question}'질문에 좋아요를 눌렀어요`
+        `'${userName}'님이 '${question.question}'질문에 좋아요를 눌렀어요`
       );
       if (question.status === 'accepted') {
         await addNotification(
           question.receiver.userName,
-          `'${userName}'님이 '${question}'답변에 좋아요를 눌렀어요`
+          `'${userName}'님이 '${question.question}'답변에 좋아요를 눌렀어요`
         );
       }
     }
