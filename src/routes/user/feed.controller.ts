@@ -54,6 +54,7 @@ export default async function (
                     authorName: true,
                     likeCount: true,
                   },
+                  orderBy: { answerAt: 'desc' },
                 },
               },
             },
@@ -107,7 +108,7 @@ export default async function (
           },
         },
       },
-      orderBy: { answerAt: 'asc' },
+      orderBy: { answerAt: 'desc' },
       take: 10,
     });
 

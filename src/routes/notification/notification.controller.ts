@@ -22,7 +22,7 @@ export default async function (
         message: true,
         read: true,
       },
-      orderBy: { createAt: 'asc' },
+      orderBy: { createAt: 'desc' },
     });
 
     res.jsend.success(notifications);
