@@ -81,6 +81,7 @@ export type RandomFeed = {
   answer: string;
   authorName: string;
   likeCount: number;
+  type: Type;
   liked?: boolean;
   receiver: {
     userName: string;

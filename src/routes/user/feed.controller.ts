@@ -100,6 +100,7 @@ export default async function (
         authorName: true,
         likeCount: true,
         answerAt: true,
+        type: true,
         receiver: {
           select: {
             userName: true,
@@ -111,6 +112,12 @@ export default async function (
       orderBy: { answerAt: 'desc' },
       take: 10,
     });
+
+    for (const feed of randomFeed) {
+      if (feed.type === 'anonymous') {
+        feed.authorName = null;
+      }
+    }
 
     if (userName) {
       // remove overlap feed

@@ -79,7 +79,7 @@ export default async function (
       const result: (typeof questions[0] & { liked: boolean })[] = [];
 
       for (const question of questions) {
-        const isLiked = await liked(question.id, currentUserName);
+        const isLiked = await liked(currentUserName, question.id);
         result.push({ ...question, liked: isLiked });
       }
 
