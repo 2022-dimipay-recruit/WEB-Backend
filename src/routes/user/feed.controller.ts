@@ -136,7 +136,7 @@ export default async function (
     res.jsend.success(feeds);
   } catch (error) {
     if (error instanceof JsonWebTokenError) {
-      return next(new HttpException(401, 'wrong tokwn', error));
+      return next(new HttpException(401, 'wrong token', error));
     }
     return next(new HttpException(500, 'server error', error));
   }
