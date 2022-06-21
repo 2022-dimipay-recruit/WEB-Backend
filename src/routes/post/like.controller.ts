@@ -37,10 +37,14 @@ export default async function (
         where: { id: questionId },
         select: { question: true, author: true, receiver: true, status: true },
       });
-      await addNotification(
-        question.author.userName,
-        `'${userName}'님이 '${question.question}'질문에 좋아요를 눌렀어요`
-      );
+
+      if (question.author) {
+        await addNotification(
+          question.author.userName,
+          `'${userName}'님이 '${question.question}'질문에 좋아요를 눌렀어요`
+        );
+      }
+
       if (question.status === 'accepted') {
         await addNotification(
           question.receiver.userName,
